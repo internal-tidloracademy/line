@@ -25,14 +25,14 @@ async function initLiff() {
     await liff.init({ liffId: LIFF_ID });
 
     if (!liff.isLoggedIn()) {
-      console.log('ℹ️ ยังไม่ล็อกอิน LIFF, เรียก login()');
+     /* console.log('ℹ️ ยังไม่ล็อกอิน LIFF, เรียก login()');*/
       liff.login();
       return;
     }
 
     const profile = await liff.getProfile();
     userId = profile.userId;
-    console.log('✅ ได้ userId:', userId);
+    /*console.log('✅ ได้ userId:', userId);*/
 
     bindFormSubmit();
   } catch (err) {
