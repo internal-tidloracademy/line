@@ -9,6 +9,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <script>
+    fetch('data.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('โหลดข้อมูลไม่สำเร็จ');
+        }
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById('output').innerText =
+          `${data.title} (v${data.version})\n${data.message}`;
+      })
+      .catch(error => {
+        document.getElementById('output').innerText = 'เกิดข้อผิดพลาด: ' + error.message;
+      });
+    </script>
     <main class="d-flex align-items-center h-100">
         <div class="container">
             <div class="row">
