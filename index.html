@@ -1,71 +1,128 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คุณเป็นพนักงานสำนักงานใหญ่หรือสาขา</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      try {
-        await liff.init({ liffId: "2007302184-J1LRyjwM" }); // 🔁 ใส่ LIFF ID ของคุณ
-
-        if (!liff.isLoggedIn()) {
-          liff.login();
-          return;
-        }
-
-        const profile = await liff.getProfile();
-        document.getElementById('userId').value = profile.userId;
-        console.log("✅ userId loaded:", profile.userId);
-
-      } catch (err) {
-        alert("เกิดข้อผิดพลาดในการโหลด LIFF: " + err.message);
-        console.error("LIFF init error:", err);
-      }
-    });
-
-    function handleSubmit(e) {
-      e.preventDefault();
-
-      const data = {
-        userId: document.getElementById('userId').value,
-        codeId: document.getElementById('codeId').value.trim(),
-        nameEn: document.getElementById('nameEn').value.trim()
-      };
-
-      google.script.run
-        .withSuccessHandler(res => {
-          alert(res.message);
-          document.getElementById('codeId').value = "";
-          document.getElementById('nameEn').value = "";
-        })
-        .withFailureHandler(err => {
-          alert("❌ บันทึกไม่สำเร็จ: " + err.message);
-        })
-        .submitFormData(data);
-
-      // if (!data.userId) {
-      //   alert("❌ ไม่พบ userId! กรุณาเปิดผ่านแอป LINE เท่านั้น");
-      //   return;
-      // }
-
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>ลงทะเบียนใช้งาน Line Tidlor Academy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <h3>คุณเป็นพนักงานสำนักงานใหญ่หรือสาขา</h3>
-  <form onsubmit="handleSubmit(event)">
-    <input type="hidden" id="userId">
+    <main class="d-flex align-items-center h-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                   <h1 class="text-center fw-bold">ลงทะเบียนใช้งาน Line OA<br>Tidlor Academy</h1>
+                    <form id="stripe-login" method="post" name="myForm">
+                      <!--onsubmit="send(event)"-->
+                        <div class="form-group">
+                            <label for="codeId">รหัสพนักงาน</label> <div id="codeIdHelp" class="d-inline text-danger form-text">*พนักงานประจำเปลี่ยน CF เป็น 10*</div>
+                            <input type="text" class="form-control" aria-describedby="codeIdHelp" id="codeId" name="codeId" maxlength="8" placeholder="กรุณากรอกรหัสพนักงาน 8 ตัวอักษร">
+              
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="nameEn">ชื่อภาษาอังกฤษ</label>
+                            <input type="text" class="form-control" id="nameEn" name="nameEn" placeholder="กรุณากรอกชื่อภาษาอังกฤษเท่านั้น">
+                        </div>   
+                        <div class="text-center">
+                            <input type="submit" id="btn" value="บันทึกข้อมูล" class="btn w-100 mt-4">     
+                            <p id="loading-text" style="display: none; margin-top: 10px;">รอสักครู่ ระบบกำลังทำการบันทึกข้อมูลของคุณ...</p>
+                        </div>
+                    </form>
+                   <div id="success-message" style="display: none; text-align: center; margin-top: 20px;">
+                      <h4>ลงทะเบียนสำเร็จ</h4>
+                      <img src="https://cdn.glitch.global/b21d7bff-940d-45a2-a262-9d0a9dfc4a35/thank.png?v=1745491052245" class="img-fluid">
+                      <p class="mb-0">ขอบคุณค่ะ</p>
+                     
+                   </div>
+                </div>
+            </div>
+        </div>
+    </main>
+  
+    <!-- script liff sdk -->    
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+    const liffId = '2007302184-J1LRyjwM';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwxU1ld8nB6cq4LmSnl1adrKzQ28nt0wOk6DSfcOahxmsrY8sAGcxQd_y5UXuc5FZA3Rg/exec';
+    let userId = '';
+    let isSubmitBound = false;
 
-    <label for="codeId">รหัสพนักงาน:</label><br>
-    <input type="text" id="codeId" required><br>
+    function main() {
+        liff.init({ liffId: liffId });
+        liff.ready.then(() => {
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return; // ถ้า login ไปแล้ว หน้าอาจ reload อย่าทำอะไรต่อ
+            }
 
-    <label for="nameEn">ชื่อภาษาอังกฤษ:</label><br>
-    <input type="text" id="nameEn" required><br><br>
+            liff.getProfile().then((profile) => {
+                userId = profile.userId;
+                console.log('Profile:', profile);
 
-    <button type="submit">บันทึกข้อมูล</button>
-  </form>
+                // ✅ ผูก submit handler แค่ครั้งเดียว
+                if (!isSubmitBound) {
+                  const form = document.forms['myForm'];
+                  const submitButton = document.getElementById('btn');
+                  const loadingText = document.getElementById('loading-text');
+                  const successMessage = document.getElementById('success-message');
+
+                  form.addEventListener('submit', e => {
+                    e.preventDefault();
+                    console.log('Form submission started');
+
+                    const submitButton = document.getElementById('btn');
+                    const loadingText = document.getElementById('loading-text');
+                    const successMessage = document.getElementById('success-message');
+
+                    submitButton.style.display = 'none';
+                    loadingText.style.display = 'block';
+
+                    const formData = new FormData(form);
+                    formData.append('userId', userId);
+
+                    // ✅ ตรวจสอบค่าห้ามว่าง
+                    const codeId = form.querySelector('#codeId')?.value.trim();
+                    const nameEn = form.querySelector('#nameEn')?.value.trim();
+
+                    if (!userId || !codeId || !nameEn) {
+                      alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+                      submitButton.style.display = 'inline-block';
+                      loadingText.style.display = 'none';
+                      return;
+                    }
+
+                    // ✅ ส่งข้อมูล
+                    fetch(scriptURL, {
+                      method: 'POST',
+                      body: formData
+                    })
+                    .then(response => {
+                      console.log('Form submitted successfully', response);
+                      form.style.display = 'none';
+                      loadingText.style.display = 'none';
+                      successMessage.style.display = 'block';
+                    })
+                    .catch(error => {
+                      console.error('Error!', error.message);
+                      submitButton.style.display = 'inline-block';
+                      loadingText.style.display = 'none';
+                    });
+                  });
+
+                  isSubmitBound = true;
+                }
+
+            });
+        });
+    }
+
+    main();
+</script>
+
+    <script src="script.js"></script>
 </body>
 </html>
