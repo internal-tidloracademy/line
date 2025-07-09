@@ -28,5 +28,20 @@
     src="https://script.google.com/macros/s/AKfycbzS0x-8k55xXLXtmvw6zlL_pLRyZfuIy4lfCgwB0HrSPc9BjurTYkr8_vvBroN5uM-IBw/exec"
     allow="clipboard-write; geolocation; microphone; camera"
   ></iframe>
+  
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    let userId = '';
+      window.addEventListener('DOMContentLoaded', () => {
+        // สมมติว่าคุณยังใช้ LIFF
+        liff.init({ liffId: '2007302184-J1LRyjwM' })
+          .then(() => liff.isLoggedIn() ? liff.getProfile() : liff.login())
+          .then(profile => {
+            userId = profile.userId;
+            bindSubmit();
+        })
+          .catch(console.error);
+      });
+  </script>
 </body>
 </html>
