@@ -19,27 +19,35 @@ window.addEventListener('DOMContentLoaded', () => {
 // ——————————————
 // ปรับใช้งาน LIFF
 // ——————————————
-async function initLiff() {
+/*async function initLiff() {
   try {
     /*console.log('▶️ กำลัง init LIFF ด้วย ID:', LIFF_ID);*/
-    await liff.init({ liffId: LIFF_ID });
+    //await liff.init({ liffId: LIFF_ID });
 
-    if (!liff.isLoggedIn()) {
+   // if (!liff.isLoggedIn()) {
      /* console.log('ℹ️ ยังไม่ล็อกอิน LIFF, เรียก login()');*/
-      liff.login();
-      return;
-    }
+   //   liff.login();
+  //    return;
+  //  }
 
-    const profile = await liff.getProfile();
-    userId = profile.userId;
+  //  const profile = await liff.getProfile();
+  //  userId = profile.userId;
     /*console.log('✅ ได้ userId:', userId);*/
 
-    bindFormSubmit();
-  } catch (err) {
-    console.error('❌ เกิดปัญหาในการ init LIFF:', err);
-    alert('ไม่สามารถเชื่อมต่อกับ LIFF ได้ โปรดลองใหม่ภายหลัง');
-  }
+ //   bindFormSubmit();
+ // } catch (err) {
+ //   console.error('❌ เกิดปัญหาในการ init LIFF:', err);
+ //   alert('ไม่สามารถเชื่อมต่อกับ LIFF ได้ โปรดลองใหม่ภายหลัง');
+//  }
+//}
+
+async function initLiff() {
+  await liff.init({ liffId: LIFF_ID });
+  const profile = await liff.getProfile();
+  userId = profile.userId;
+  bindFormSubmit();
 }
+
 
 // ——————————————
 // ผูก event submit form
