@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // ——————————————
 async function initLiff() {
   try {
-    console.log('▶️ กำลัง init LIFF ด้วย ID:', LIFF_ID);
+    /*console.log('▶️ กำลัง init LIFF ด้วย ID:', LIFF_ID);*/
     await liff.init({ liffId: LIFF_ID });
 
     if (!liff.isLoggedIn()) {
@@ -67,37 +67,31 @@ function bindFormSubmit() {
       return;
     }
 
-    btn.style.display = 'none';
+    btn.style.display         = 'none';
     loadingText.style.display = 'block';
 
     const payload = { userId, codeId, nameEn };
     console.log('▶️ payload ที่จะส่งไป GAS:', payload);
 
     try {
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+      // mode no-cors จะปิด CORS preflight และไม่อ่าน response
+      await fetch(SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
       });
-      console.log('➡️ Fetch ส่งไป:', SCRIPT_URL);
-      console.log('⬅️ Fetch ตอบกลับ status:', response.status);
+      console.log('✅ ส่ง (no-cors) เรียบร้อย');
 
-      const result = await response.json();
-      console.log('✅ result จาก GAS:', result);
+      // แสดงผลสำเร็จทันที
+      form.style.display         = 'none';
+      loadingText.style.display  = 'none';
+      successMessage.style.display = 'block';
 
-      if (response.ok && result.result === 'success') {
-        form.style.display      = 'none';
-        loadingText.style.display    = 'none';
-        successMessage.style.display = 'block';
-      } else {
-        throw new Error(result.error || 'HTTP ' + response.status);
-      }
     } catch (error) {
       console.error('❌ ส่งไม่สำเร็จ:', error);
       alert('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่');
-      btn.style.display = 'block';
+      btn.style.display         = 'block';
       loadingText.style.display = 'none';
     }
   });
