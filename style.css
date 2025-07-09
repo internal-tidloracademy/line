@@ -1,53 +1,100 @@
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+Thai:400,700&display=swap');
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Noto Sans Thai", sans-serif;
 }
 
-body{
-  background: #0360ba;
-}
-
-html,body{
+html, body {
   height: 100%;
 }
 
-main{   
+body {
+  background: #0360ba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
   width: 100%;
+  max-width: 400px;
+  padding: 20px;
 }
 
-h1{
-  font-weight: 700; 
-  font-size:30px; 
-  margin-bottom:30px;
+h1 {
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 20px;
   color: #ffffff;
-
+  text-align: center;
 }
 
-label{
-  font-size:18px;
-    
+label {
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.btn{
-    background: #0360ba;
-    border-color: #0360ba;
-    color: #ffffff;
+input.form-control {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  font-size: 16px;
 }
 
-.btn:hover, .btn:active, .btn:focus{
-    background: #e9ecef;
-    border-color: #818182;
-    color: #000000;
+input.form-control:focus {
+  outline: none;
+  border-color: #0360ba;
+  box-shadow: 0 0 0 2px rgba(3, 96, 186, 0.2);
 }
 
-form#stripe-login, #success-message {
-    padding: 25px;
-    border: 1px solid #0360ba;
-    background: #e2f1fc;
-    border-radius: 8px;
-    box-shadow: 1px 2px 3px #383d418c;
+.btn {
+  background: #0360ba;
+  border-color: #0360ba;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active {
+  background: #ffffff;
+  color: #0360ba;
+  border-color: #ffffff;
+}
+
+form#registerForm,
+#successMessage {
+  padding: 24px;
+  border: 1px solid #0360ba;
+  background: #e2f1fc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(56, 61, 65, 0.2);
+}
+
+#loadingText {
+  font-size: 14px;
+  color: #0360ba;
+}
+
+/* ปรับสไตล์ success message */
+#successMessage h4 {
+  font-size: 22px;
+  color: #0360ba;
+  margin-bottom: 16px;
+}
+
+#successMessage img {
+  max-width: 150px;
+  margin-bottom: 12px;
+}
+
+#successMessage p {
+  font-size: 16px;
+  color: #0360ba;
 }
