@@ -1,125 +1,98 @@
 // ——————————————
 // ตั้งค่า LIFF ID และ URL ของ GAS Web App
 // ——————————————
-const LIFF_ID    = '2007302184-J1LRyjwM';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBlkjjj7yBlSUkJk43qyJ4b7rkSj1Jmoq0vsshBi-55YZqTzt9mF2-6fBvG6E4L0wFCQ/exec';
+const liffId    = '2007302184-J1LRyjwM';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxBlkjjj7yBlSUkJk43qyJ4b7rkSj1Jmoq0vsshBi-55YZqTzt9mF2-6fBvG6E4L0wFCQ/exec';
 
 let userId = '';
-let isFormBound = false;
+let isSubmitBound = false;
 
-// ——————————————
-// เริ่มทำงานเมื่อ DOM โหลดแล้ว
-// ——————————————
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('✅ DOMContentLoaded');
-  initLiff();
-  bindNameInputValidation();
-});
+function main() {
+  // เรียก init แล้วรอจน LIFF พร้อม
+  liff.init({ liffId })
+    .then(() => liff.ready)
+    .then(() => {
+      console.log('✅ LIFF พร้อมใช้งาน');
 
-// ——————————————
-// ปรับใช้งาน LIFF
-// ——————————————
-/*async function initLiff() {
-  try {
-    /*console.log('▶️ กำลัง init LIFF ด้วย ID:', LIFF_ID);*/
-    //await liff.init({ liffId: LIFF_ID });
+      // ถ้ายังไม่ล็อกอิน ให้ redirect ไปล็อกอินก่อน
+      if (!liff.isLoggedIn()) {
+        console.log('ℹ️ ยังไม่ล็อกอิน LIFF, กำลังไปล็อกอิน');
+        liff.login();
+        return;
+      }
 
-   // if (!liff.isLoggedIn()) {
-     /* console.log('ℹ️ ยังไม่ล็อกอิน LIFF, เรียก login()');*/
-   //   liff.login();
-  //    return;
-  //  }
+      // ดึง profile
+      return liff.getProfile();
+    })
+    .then(profile => {
+      if (!profile) return; // กรณีกลับมาจาก login
 
-  //  const profile = await liff.getProfile();
-  //  userId = profile.userId;
-    /*console.log('✅ ได้ userId:', userId);*/
+      userId = profile.userId;
+      console.log('✅ ได้ userId:', userId);
 
- //   bindFormSubmit();
- // } catch (err) {
- //   console.error('❌ เกิดปัญหาในการ init LIFF:', err);
- //   alert('ไม่สามารถเชื่อมต่อกับ LIFF ได้ โปรดลองใหม่ภายหลัง');
-//  }
-//}
-
-async function initLiff() {
-  await liff.init({ liffId: LIFF_ID });
-  const profile = await liff.getProfile();
-  userId = profile.userId;
-  bindFormSubmit();
+      bindFormSubmit();
+    })
+    .catch(err => {
+      console.error('❌ เกิดข้อผิดพลาดใน LIFF flow:', err);
+      alert('ไม่สามารถเชื่อมต่อกับ LIFF ได้ โปรดลองอีกครั้ง');
+    });
 }
 
-
-// ——————————————
-// ผูก event submit form
-// ——————————————
 function bindFormSubmit() {
-  if (isFormBound) return;
+  if (isSubmitBound) return;
   console.log('▶️ ผูก form submit handler');
 
-  const form           = document.getElementById('registerForm');
-  const btn            = document.getElementById('btnSubmit');
-  const loadingText    = document.getElementById('loadingText');
-  const successMessage = document.getElementById('successMessage');
+  const form           = document.forms['myForm'];
+  const submitButton   = document.getElementById('btn');
+  const loadingText    = document.getElementById('loading-text');
+  const successMessage = document.getElementById('success-message');
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', e => {
     e.preventDefault();
-    console.log('▶️ form submit ถูกเรียก');
+    console.log('📝 เริ่มการส่งฟอร์ม');
 
-    const codeId = document.getElementById('codeId').value.trim();
-    const nameEn = document.getElementById('nameEn').value.trim();
+    // ดึงค่า input
+    const codeId = form.querySelector('#codeId').value.trim();
+    const nameEn = form.querySelector('#nameEn').value.trim();
     console.log('📥 ค่า input:', { userId, codeId, nameEn });
 
+    // ตรวจข้อมูลครบ
     if (!userId || !codeId || !nameEn) {
       console.warn('⚠️ ข้อมูลไม่ครบ', { userId, codeId, nameEn });
       alert('❌ กรุณากรอกข้อมูลให้ครบทุกช่อง');
       return;
     }
 
-    btn.style.display         = 'none';
-    loadingText.style.display = 'block';
+    // แสดง loading
+    submitButton.style.display = 'none';
+    loadingText.style.display  = 'block';
 
-    const payload = { userId, codeId, nameEn };
-    console.log('▶️ payload ที่จะส่งไป GAS:', payload);
+    // เตรียม FormData แล้ว append userId
+    const formData = new FormData(form);
+    formData.append('userId', userId);
 
-    try {
-      // mode no-cors จะปิด CORS preflight และไม่อ่าน response
-      await fetch(SCRIPT_URL, {
-        method:  'POST',
-        mode:    'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(payload),
-      });
-      console.log('✅ ส่ง (no-cors) เรียบร้อย');
+    console.log('▶️ กำลังส่งข้อมูลไป GAS:', { codeId, nameEn, userId });
 
-      // แสดงผลสำเร็จทันที
-      form.style.display         = 'none';
-      loadingText.style.display  = 'none';
+    fetch(scriptURL, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      console.log('✅ ส่งสำเร็จ:', response);
+      form.style.display        = 'none';
+      loadingText.style.display = 'none';
       successMessage.style.display = 'block';
-
-    } catch (error) {
+    })
+    .catch(error => {
       console.error('❌ ส่งไม่สำเร็จ:', error);
       alert('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่');
-      btn.style.display         = 'block';
-      loadingText.style.display = 'none';
-    }
+      submitButton.style.display = 'inline-block';
+      loadingText.style.display  = 'none';
+    });
   });
 
-  isFormBound = true;
+  isSubmitBound = true;
 }
 
-// ——————————————
-// ตรวจ input ชื่อ ให้เหลือเฉพาะ A–Z/a–z
-// ——————————————
-function bindNameInputValidation() {
-  const input = document.getElementById('nameEn');
-  if (!input) return;
-
-  input.addEventListener('input', () => {
-    const filtered = input.value.replace(/[^a-zA-Z]/g, '');
-    if (filtered !== input.value) {
-      console.log('⚠️ แก้ค่า nameEn:', input.value, '→', filtered);
-      input.value = filtered;
-      alert('กรุณากรอกเฉพาะภาษาอังกฤษเท่านั้น');
-    }
-  });
-}
+// เรียก main ทันที
+main();
