@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+Thai:400,700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans Thai", sans-serif;
+}
+
+body{
+  background: #0360ba;
+}
+
+html,body{
+  height: 100%;
+}
+
+main{   
+  width: 100%;
+}
+
+h1{
+  font-weight: 700; 
+  font-size:30px; 
+  margin-bottom:30px;
+  color: #ffffff;
+
+}
+
+label{
+  font-size:18px;
+    
+}
+
+.btn{
+    background: #0360ba;
+    border-color: #0360ba;
+    color: #ffffff;
+}
+
+.btn:hover, .btn:active, .btn:focus{
+    background: #e9ecef;
+    border-color: #818182;
+    color: #000000;
+}
+
+form#stripe-login, #success-message {
+    padding: 25px;
+    border: 1px solid #0360ba;
+    background: #e2f1fc;
+    border-radius: 8px;
+    box-shadow: 1px 2px 3px #383d418c;
+}
