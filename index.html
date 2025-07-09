@@ -1,54 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>ลงทะเบียนใช้งาน Line Tidlor Academy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ลงทะเบียนใช้งาน Line OA Tidlor Academy</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main class="d-flex align-items-center h-100">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                   <h1 class="text-center fw-bold">ลงทะเบียนใช้งาน Line OA<br>Tidlor Academy</h1>
-                    <form id="stripe-login" method="post" name="myForm">
-                      <!--onsubmit="send(event)"-->
-                        <div class="form-group">
-                            <label for="codeId">รหัสพนักงาน</label> <div id="codeIdHelp" class="d-inline text-danger form-text">*พนักงานประจำเปลี่ยน CF เป็น 10*</div>
-                            <input type="text" class="form-control" aria-describedby="codeIdHelp" id="codeId" name="codeId" maxlength="8" placeholder="กรุณากรอกรหัสพนักงาน 8 ตัวอักษร">
-              
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="nameEn">ชื่อภาษาอังกฤษ</label>
-                            <input type="text" class="form-control" id="nameEn" name="nameEn" placeholder="กรุณากรอกชื่อภาษาอังกฤษเท่านั้น">
-                        </div>   
-                        <div class="text-center">
-                            <input type="submit" id="btn" value="บันทึกข้อมูล" class="btn w-100 mt-4">     
-                            <p id="loading-text" style="display: none; margin-top: 10px;">รอสักครู่ ระบบกำลังทำการบันทึกข้อมูลของคุณ...</p>
-                        </div>
-                    </form>
-                   <div id="success-message" style="display: none; text-align: center; margin-top: 20px;">
-                      <h4>ลงทะเบียนสำเร็จ</h4>
-                      <img src="https://cdn.glitch.global/b21d7bff-940d-45a2-a262-9d0a9dfc4a35/thank.png?v=1745491052245" class="img-fluid">
-                      <p class="mb-0">ขอบคุณค่ะ</p>
-                     
-                   </div>
-                </div>
+  <main class="d-flex align-items-center h-100">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 mx-auto" style="max-width: 400px;">
+          <h1 class="text-center fw-bold mb-4">
+            ลงทะเบียนใช้งาน Line OA<br>Tidlor Academy
+          </h1>
+
+          <form id="registerForm" name="myForm">
+            <div class="mb-3">
+              <label for="codeId" class="form-label">รหัสพนักงาน</label>
+              <div id="codeIdHelp" class="form-text text-danger">
+                *พนักงานประจำเปลี่ยน CF เป็น 10*
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="codeId"
+                name="codeId"
+                maxlength="8"
+                placeholder="กรุณากรอกรหัสพนักงาน 8 ตัวอักษร">
             </div>
+
+            <div class="mb-3">
+              <label for="nameEn" class="form-label">ชื่อภาษาอังกฤษ</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nameEn"
+                name="nameEn"
+                placeholder="กรุณากรอกชื่อภาษาอังกฤษเท่านั้น">
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" id="btnSubmit" class="btn btn-primary">
+                บันทึกข้อมูล
+              </button>
+            </div>
+
+            <p id="loadingText"
+               class="text-center mt-3"
+               style="display: none;">
+              รอสักครู่ ระบบกำลังทำการบันทึกข้อมูลของคุณ...
+            </p>
+          </form>
+
+          <div id="successMessage"
+               class="text-center mt-4"
+               style="display: none;">
+            <h4>ลงทะเบียนสำเร็จ</h4>
+            <img
+              src="https://cdn.glitch.global/b21d7bff-940d-45a2-a262-9d0a9dfc4a35/thank.png?v=1745491052245"
+              class="img-fluid"
+              alt="ขอบคุณค่ะ">
+            <p class="mt-2">ขอบคุณค่ะ</p>
+          </div>
         </div>
-    </main>
-  
-    <!-- script liff sdk -->    
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="script.js"></script>
-    <script>
-         window.addEventListener('DOMContentLoaded', () => {
-            main();
-          });
-    </script>
+      </div>
+    </div>
+  </main>
+
+  <!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
