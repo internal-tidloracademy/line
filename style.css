@@ -7,17 +7,11 @@
   font-family: "Noto Sans Thai", sans-serif;
 }
 
-body{
-  background: #0360ba;
-}
+body{ background: #0360ba; }
 
-html,body{
-  height: 100%;
-}
+html,body{ height: 100%; }
 
-main{   
-  width: 100%;
-}
+main{ width: 100%; }
 
 h1{
   font-weight: 700; 
@@ -27,10 +21,7 @@ h1{
 
 }
 
-label{
-  font-size:18px;
-    
-}
+label{ font-size:18px; }
 
 .btn{
     background: #0360ba;
