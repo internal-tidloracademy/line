@@ -46,83 +46,86 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-    const liffId = '2007302184-J1LRyjwM';
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwxU1ld8nB6cq4LmSnl1adrKzQ28nt0wOk6DSfcOahxmsrY8sAGcxQd_y5UXuc5FZA3Rg/exec';
-    let userId = '';
-    let isSubmitBound = false;
-
-    function main() {
-        liff.init({ liffId: liffId });
-        liff.ready.then(() => {
-            if (!liff.isLoggedIn()) {
-                liff.login();
-                return; // ถ้า login ไปแล้ว หน้าอาจ reload อย่าทำอะไรต่อ
-            }
-
-            liff.getProfile().then((profile) => {
-                userId = profile.userId;
-                console.log('Profile:', profile);
-
-                // ✅ ผูก submit handler แค่ครั้งเดียว
-                if (!isSubmitBound) {
-                  const form = document.forms['myForm'];
-                  const submitButton = document.getElementById('btn');
-                  const loadingText = document.getElementById('loading-text');
-                  const successMessage = document.getElementById('success-message');
-
-                  form.addEventListener('submit', e => {
-                    e.preventDefault();
-                    console.log('Form submission started');
-
-                    const submitButton = document.getElementById('btn');
-                    const loadingText = document.getElementById('loading-text');
-                    const successMessage = document.getElementById('success-message');
-
-                    submitButton.style.display = 'none';
-                    loadingText.style.display = 'block';
-
-                    const formData = new FormData(form);
-                    formData.append('userId', userId);
-
-                    // ✅ ตรวจสอบค่าห้ามว่าง
-                    const codeId = form.querySelector('#codeId')?.value.trim();
-                    const nameEn = form.querySelector('#nameEn')?.value.trim();
-
-                    if (!userId || !codeId || !nameEn) {
-                      alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-                      submitButton.style.display = 'inline-block';
-                      loadingText.style.display = 'none';
-                      return;
-                    }
-
-                    // ✅ ส่งข้อมูล
-                    fetch(scriptURL, {
-                      method: 'POST',
-                      body: formData
-                    })
-                    .then(response => {
-                      console.log('Form submitted successfully', response);
-                      form.style.display = 'none';
-                      loadingText.style.display = 'none';
-                      successMessage.style.display = 'block';
-                    })
-                    .catch(error => {
-                      console.error('Error!', error.message);
-                      submitButton.style.display = 'inline-block';
-                      loadingText.style.display = 'none';
-                    });
-                  });
-
-                  isSubmitBound = true;
+        const liffId = '2007302184-J1LRyjwM';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwxU1ld8nB6cq4LmSnl1adrKzQ28nt0wOk6DSfcOahxmsrY8sAGcxQd_y5UXuc5FZA3Rg/exec';
+        let userId = '';
+        let isSubmitBound = false;
+    
+        function main() {
+            liff.init({ liffId: liffId });
+            liff.ready.then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return; // ถ้า login ไปแล้ว หน้าอาจ reload อย่าทำอะไรต่อ
                 }
-
+    
+                liff.getProfile().then((profile) => {
+                    userId = profile.userId;
+                    console.log('Profile:', profile);
+    
+                    // ✅ ผูก submit handler แค่ครั้งเดียว
+                    if (!isSubmitBound) {
+                      const form = document.forms['myForm'];
+                      const submitButton = document.getElementById('btn');
+                      const loadingText = document.getElementById('loading-text');
+                      const successMessage = document.getElementById('success-message');
+                    
+                      form.addEventListener('submit', e => {
+                        e.preventDefault();
+                        console.log('Form submission started');
+                    
+                        // ดึงค่าและตรวจสอบไม่ให้ว่าง
+                        const codeId = form.codeId.value.trim();
+                        const nameEn = form.nameEn.value.trim();
+                        if (!userId || !codeId || !nameEn) {
+                          alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+                          return;
+                        }
+                    
+                        // ซ่อนปุ่ม และแสดง loading
+                        submitButton.style.display = 'none';
+                        loadingText.style.display = 'block';
+                    
+                        // เตรียม payload แบบ URL-encoded
+                        const payload = new URLSearchParams({
+                          codeId:  codeId,
+                          nameEn:  nameEn,
+                          userId:  userId
+                        }).toString();
+                    
+                        // ส่งข้อมูล
+                        fetch(scriptURL, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                          },
+                          body: payload
+                        })
+                        .then(r => r.json())
+                        .then(res => {
+                          console.log('GAS response:', res);
+                          // แสดงข้อความสำเร็จ
+                          form.style.display = 'none';
+                          loadingText.style.display = 'none';
+                          successMessage.style.display = 'block';
+                        })
+                        .catch(err => {
+                          console.error('Error!', err);
+                          // กลับไปให้กรอกใหม่
+                          submitButton.style.display = 'inline-block';
+                          loadingText.style.display = 'none';
+                          alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+                        });
+                      });
+                      isSubmitBound = true;
+                    }
+    
+                });
             });
-        });
-    }
-
-    main();
-</script>
-
-    <script src="script.js?v=1.1"></script>
-</body>
+        }
+    
+        main();
+    </script>
+        <script src="script.js?v=1.1"></script>
+    </body>
 </html>
