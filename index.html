@@ -47,7 +47,7 @@
     
     <script>
         const liffId = '2007302184-J1LRyjwM';
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwxU1ld8nB6cq4LmSnl1adrKzQ28nt0wOk6DSfcOahxmsrY8sAGcxQd_y5UXuc5FZA3Rg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxdICAkNgX_KSOGRwr2h1rEXCNa0_Uqp9lca3AGSX5wXsLhKI4rhbUGKz8SmXUnEUmRtg/exec';
         let userId = '';
         let isSubmitBound = false;
     
@@ -64,7 +64,6 @@
                     console.log('Profile:', profile);
     
                     // ✅ ผูก submit handler แค่ครั้งเดียว
-                    if (!isSubmitBound) {
                       const form = document.forms['myForm'];
                       const submitButton = document.getElementById('btn');
                       const loadingText = document.getElementById('loading-text');
@@ -117,8 +116,6 @@
                           alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                         });
                       });
-                      isSubmitBound = true;
-                    }
     
                 });
             });
